@@ -94,7 +94,7 @@ Implement the Song, Artist, Album and Entity classes, including constructors, se
 
 #### Task 4. (4 points)
 
-Create unit tests for each of these classes. You can test all of the classes within one test program if you like,
+Create unit tests for each of these classes. You can test all of the classes within one test program if you like.
 
 #### Task 5. (5 points)
 
