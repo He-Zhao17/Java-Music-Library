@@ -48,4 +48,21 @@ public class Library {
     public Entity findDuplicate(Entity e) {
 
     }
+
+    /* you complete this. Read from a file that has a CSV format like:
+    Here Comes the Sun, The Beatles, Abbey Road, 3:22
+    Tomorrow Never Knows, The Beatles, Revolver, 2:56
+
+     */
+    public void readFromFile(String f) {
+
+    }
+
+    /* write the data out to a file in the exact same format. */
+    public void writeToFile() {
+
+    }
+
+
+
 }
