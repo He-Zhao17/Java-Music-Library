@@ -1,4 +1,4 @@
-##Lab 3: Music Library
+## Lab 3: Music Library
 
 Due:  Sept 15, 11:59 pm PST
 
