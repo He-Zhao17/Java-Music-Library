@@ -1,7 +1,4 @@
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 public class Library {
@@ -90,6 +87,7 @@ public class Library {
     }
     /* you complete this */
     // Will all the songs and albums of an artist be deleted when this artist has been deleted?
+    // If this song is also in a playlist. Should I delete that song from the playlist? Or make some notification?
     public void delete(Entity e) {
         if (e instanceof Song) {
             songs.remove((Song)e);
@@ -214,14 +212,15 @@ public class Library {
     Tomorrow Never Knows, The Beatles, Revolver, 2:56
 
      */
-    public void readFromFile(String f) {
+    public void readFromFile(String filenameofimport) {
         ArrayList<String> songsfile = new ArrayList<String>();
-        File songsfile_csv = new File("readfromfile.csv");
+        File songsfile_csv = new File(filenameofimport);
         if (!songsfile_csv.exists()) {
-            songsfile.set(0,"");
+            System.out.println("Error! There is no such document .csv");
+            return;
         } else {
             try {
-                FileReader songs_fr = new FileReader("readfromfile.csv");
+                FileReader songs_fr = new FileReader(filenameofimport);
                 BufferedReader songs_bfr = new BufferedReader(songs_fr);
                 String songs_str;
                 while ((songs_str = songs_bfr.readLine()) != null) {
@@ -230,21 +229,93 @@ public class Library {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-        for (String song1: songsfile) {
-            if ()
+            try {
+                // read
+                outer:
+                for (String song1: songsfile) {
+                    String[] song_inf = song1.split(", ");
+                    Song newsong = new Song();
+                    newsong.setName(song_inf[0]);
+                    Artist newartist = new Artist();
+                    newartist.setName(song_inf[1]);
+                    Album newalbum = new Album();
+                    newalbum.setName(song_inf[2]);
+                    newsong.setArtist(newartist);
+                    newsong.setRunningTime(song_inf[3]);
+                    newartist.songs.add(newsong);
+                    newartist.albums.add(newalbum);
+                    newalbum.songs.add(newsong);
+                    newalbum.setArtist(newartist);
+                    for (Song song: songs) {
+                        if (song.equals(newsong)) {
+                            continue outer;
+                        } else {
 
+                        }
+                    }
+                    // new song!
+                    for (Artist artist: artists) {
+                        if (artist.equals(newartist)) {
+                            for (Album album: artist.albums) {
+                                if (album.equals(newalbum)) {
+                                    // artist yes! album yes! new song!
+                                    newsong.setArtist(artist);
+                                    artist.songs.add(newsong);
+                                    album.songs.add(newsong);
+                                    continue outer;
+                                } else {
 
+                                }
+                            }
+                            // artist yes! album no! new song!
+                            newsong.setArtist(artist);
+                            newalbum.setArtist(artist);
+                            artist.songs.add(newsong);
+                            artist.albums.add(newalbum);
+                            continue outer;
+                        } else {
 
+                        }
+                    }
+                    // new song! artist no! album no!
+                    songs.add(newsong);
+                    albums.add(newalbum);
+                    artists.add(newartist);
+                }
+            } catch(IOException e) {
+                System.out.println("Cannot import this .csv!");
+                e.printStackTrace();
+                return;
+            }
 
         }
     }
 
     /* write the data out to a file in the exact same format. */
-    public void writeToFile() {
+    public void writeToFile(String fileout) {
+        PrintWriter filewritten;
+        try {
+            filewritten = new PrintWriter(fileout);
+            outer:
+            for (Song song: songs) {
+                // I do not know whether I should add "Album album" into class Song because there is not that instance variable in your code.
+                // So I get that in a stupid way.
+                for (Album album: albums) {
+                    for (Song song1: album.songs) {
+                        if (song1.getName() == song.getName() && song1.getArtist().equals(song.getArtist())) {
+                            filewritten.println(song.getName() + ", " + song.getArtist().getName() + ", " + album.getName() + ", " + song.getRunningTime() + "\n");
+                            continue outer;
+                        } else {
 
+                        }
+                    }
+                }
+            }
+            filewritten.close();
+        } catch (IOException e) {
+            System.out.println("Error! Cannot output the library.");
+            e.printStackTrace();
+            return;
+        }
     }
-
-
-
 }
