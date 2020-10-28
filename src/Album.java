@@ -54,17 +54,17 @@ public class Album extends Entity {
     }
     /* you complete this */
     public String toString() {
-        String str = "Album name: " + this.name + "\nArtist: " + this.artist.name + "\nThe songs of this album: " + "Number of songs in this album is " + this.totalLength;
+        StringBuffer str = new StringBuffer();
+        str.append("Album name: " + this.name + "\nArtist: " + this.artist.name + "\nThe songs of this album: ");
         if (this.songs.size() == 0) {
 
         } else {
-            for (int i = 0; i < this.songs.size() - 1; i++) {
-                str.concat(this.songs.get(i).name);
-                str.concat(", ");
+            for (Song song: songs) {
+                str.append(song.getName());
+                str.append(", ");
             }
         }
-        str.concat(this.songs.get(this.songs.size() - 1).name);
-        return str;
+        return str.toString();
     }
 
 

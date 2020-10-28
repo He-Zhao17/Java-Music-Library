@@ -5,6 +5,7 @@ public class Song extends Entity {
     Artist artist;
     int timesPlayed;
     String runningTime;
+    Album album;
 
     /* you complete this */
     public Song() {
@@ -25,6 +26,13 @@ public class Song extends Entity {
     }
 
     /* add setters and getters */
+    public void setAlbum(Album setalbum) {
+        album = setalbum;
+    }
+    public Album getAlbum() {
+        return album;
+    }
+
     public void setFilename(String setfilename) {
         filename = setfilename;
     }
@@ -55,7 +63,7 @@ public class Song extends Entity {
 
     /* you complete this */
     public String toString() {
-        return "Song name: " + this.name +"\nFilename: " + this.filename + "Date created: " + this.dateCreated + "\nArtist: " + this.artist.name + "\nTimes played: " + this.timesPlayed + "\nRunning time: " + this.runningTime;
+        return "Song name: " + this.name +"\nFilename: " + this.filename + "\nDate created: " + this.dateCreated + "\nArtist: " + this.artist.name + "\nTimes played: " + this.timesPlayed + "\nRunning time: " + this.runningTime;
     }
 
     /* you complete this. Assume that two songs are equal if they have the same name and the same artist. */

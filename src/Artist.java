@@ -36,27 +36,27 @@ public class Artist extends Entity {
 
     /* you complete this */
     public String toString() {
-        String str = "Artist name: " + this.name + "\nSongs of this Artist: ";
+        StringBuffer str = new StringBuffer();
+        str.append("Artist name: " + this.name + "\nSongs of this Artist: ");
+
         if (songs.size() == 0) {
 
         } else {
-            for (int i = 0; i < this.songs.size() - 1; i++) {
-                str.concat(this.songs.get(i).name);
-                str.concat(", ");
+            for (Song song: songs) {
+                str.append(song.getName());
+                str.append(", ");
             }
-            str.concat(this.songs.get(this.songs.size() - 1).name);
         }
-        str.concat("\nAlbums of this artist: ");
+        str.append("\nAlbums of this artist: ");
         if (albums.size() == 0) {
 
         } else {
-            for (int j = 0; j < this.albums.size() - 1; j++) {
-                str.concat(this.albums.get(j).name);
-                str.concat(", ");
+            for (Album album: albums) {
+                str.append(album.getName());
+                str.append(", ");
             }
-            str.concat(this.albums.get(this.albums.size() - 1).name);
         }
-        return str;
+        return str.toString();
     }
 
     /* you complete this. Assume that two artists are equal if they have the same name. */

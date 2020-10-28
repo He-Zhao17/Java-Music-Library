@@ -36,9 +36,9 @@ public class Library {
 
    /* you complete this. Return an empty Album if the search fails. If there is more than one match, return the first */
     public Album findAlbum(String name) {
-        for (int i = 0; i < albums.size(); i++) {
-            if (name == albums.get(i).name) {
-                return albums.get(i);
+        for (Album album: albums) {
+            if (album.getName().equals(name)) {
+                return album;
             } else {
 
             }
@@ -49,9 +49,9 @@ public class Library {
 
     /* you complete this. Return an empty Artist if the search fails. If there is more than one match, return the first*/
     public Artist findArtist(String name) {
-        for (int i =0; i < artists.size(); i++) {
-            if (name == artists.get(i).name) {
-                return artists.get(i);
+        for (Artist artist: artists) {
+            if (artist.getName().equals(name)) {
+                return artist;
             } else {
 
             }
@@ -62,11 +62,9 @@ public class Library {
 
     /* you complete this. Return an empty Song if the search fails. If there is more than one match, return the first*/
     public Song findSong(String name, Artist a) {
-        for (int i = 0; i < songs.size(); i++) {
-            if (name == songs.get(i).name) {
-                return songs.get(i);
-            } else {
-
+        for (Song song: songs) {
+            if (song.getName().equals(name) && song.getArtist().equals(a)) {
+                return song;
             }
         }
         Song emptysong = new Song();
@@ -74,16 +72,18 @@ public class Library {
     }
 
     /* you complete this. */
+
+
     public void add(Entity e) {
-        if (e instanceof Song) {
-            songs.add((Song) e);
-        } else if (e instanceof Album) {
-            albums.add((Album)e);
-        } else if (e instanceof Artist) {
-            artists.add((Artist)e);
-        } else {
-            System.out.println("Fail to add to Library. This is an incorrect type.");
-        }
+      if (e instanceof Song) {
+          songs.add((Song) e);
+      } else if (e instanceof Artist) {
+          artists.add((Artist) e);
+      } else if (e instanceof Album) {
+          albums.add((Album) e);
+      } else {
+          System.out.println("Error. Incorrect type.");
+      }
     }
     /* you complete this */
     // Will all the songs and albums of an artist be deleted when this artist has been deleted?
@@ -91,10 +91,91 @@ public class Library {
     public void delete(Entity e) {
         if (e instanceof Song) {
             songs.remove((Song)e);
+            for (Artist artist: artists) {
+                if (artist.equals(((Song) e).artist)) {
+                    for (Album album: artist.albums) {
+                        for (Song song: album.songs) {
+                            if (song.equals(e)) {
+                                album.songs.remove(e);
+                            } else {
+
+                            }
+                        }
+                    }
+                    for (Song song: artist.songs) {
+                        if (song.equals(e)) {
+                            artist.songs.remove(e);
+                        } else {
+
+                        }
+                    }
+                } else {
+
+                }
+            }
+            for (Album album: albums) {
+                if (album.artist.getName() == ((Song) e).artist.getName()) {
+                    for (Song song: album.songs) {
+                        if (song.equals(e)) {
+                            album.songs.remove(e);
+                        } else {
+
+                        }
+                    }
+                } else {
+
+                }
+            }
         } else if (e instanceof Album) {
             albums.remove((Album)e);
+            outer1:
+            for (Artist artist: artists) {
+                if (artist.equals(((Album) e).artist)) {
+                    for (Album album: artist.albums) {
+                        if (album.equals(e)) {
+                            artist.albums.remove(e);
+                            break outer1;
+                        }
+                    }
+                }
+            }
+            for (Song song: ((Album) e).songs) {
+                for (Song song1: songs) {
+                    if (song1.equals(song)) {
+                        songs.remove(song1);
+                        break;
+                    } else {
+
+                    }
+                }
+                outer2:
+                for (Artist artist: artists) {
+                    if (artist.equals(((Album) e).artist)) {
+                        for (Song song2: artist.songs) {
+                            if (song2.equals(song)) {
+                                artist.songs.remove(song2);
+                                break outer2;
+                            }
+                        }
+                    }
+                }
+            }
         } else if (e instanceof Artist) {
-            artists.remove((Album)e);
+            artists.remove((Artist) e);
+            for (Song song: ((Artist) e).songs) {
+                for (Song song1: songs) {
+                    if (song1.equals(song)) {
+                        songs.remove(song1);
+                        break;
+                    }
+                }
+            }
+            for (Album album: albums) {
+                if (album.equals(e)) {
+                    albums.remove(e);
+                    break;
+                }
+            }
         } else {
             System.out.println("Fail to delete from library. This is an incorrect type.");
         }
@@ -212,82 +293,47 @@ public class Library {
     Tomorrow Never Knows, The Beatles, Revolver, 2:56
 
      */
+
+    //In this section, I have read your code in your Github, I use your thought because yours is better than mine.
     public void readFromFile(String filenameofimport) {
-        ArrayList<String> songsfile = new ArrayList<String>();
-        File songsfile_csv = new File(filenameofimport);
-        if (!songsfile_csv.exists()) {
-            System.out.println("Error! There is no such document .csv");
-            return;
-        } else {
-            try {
-                FileReader songs_fr = new FileReader(filenameofimport);
-                BufferedReader songs_bfr = new BufferedReader(songs_fr);
-                String songs_str;
-                while ((songs_str = songs_bfr.readLine()) != null) {
-                    songsfile.add(songs_str);
+        File imf;
+        Scanner scan;
+        String line;
+        try {
+            imf = new File(filenameofimport);
+            scan = new Scanner(imf);
+            while (scan.hasNext()) {
+                line = scan.nextLine();
+                String[] s = line.split(", ");
+                Artist newartist = findArtist(s[1].strip());
+                if (newartist.getName().length() == 0) {
+                    newartist = new Artist(s[1].strip());
+                    add(newartist);
+                } else {
+
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                // read
-                outer:
-                for (String song1: songsfile) {
-                    String[] song_inf = song1.split(", ");
-                    Song newsong = new Song();
-                    newsong.setName(song_inf[0]);
-                    Artist newartist = new Artist();
-                    newartist.setName(song_inf[1]);
-                    Album newalbum = new Album();
-                    newalbum.setName(song_inf[2]);
-                    newsong.setArtist(newartist);
-                    newsong.setRunningTime(song_inf[3]);
-                    newartist.songs.add(newsong);
-                    newartist.albums.add(newalbum);
-                    newalbum.songs.add(newsong);
+                Album newalbum = findAlbum(s[2]);
+                if (newalbum.getName().length() == 0) {
+                    newalbum = new Album(s[2].strip());
                     newalbum.setArtist(newartist);
-                    for (Song song: songs) {
-                        if (song.equals(newsong)) {
-                            continue outer;
-                        } else {
+                    newartist.getAlbums().add(newalbum);
+                    add(newalbum);
+                } else {
 
-                        }
-                    }
-                    // new song!
-                    for (Artist artist: artists) {
-                        if (artist.equals(newartist)) {
-                            for (Album album: artist.albums) {
-                                if (album.equals(newalbum)) {
-                                    // artist yes! album yes! new song!
-                                    newsong.setArtist(artist);
-                                    artist.songs.add(newsong);
-                                    album.songs.add(newsong);
-                                    continue outer;
-                                } else {
-
-                                }
-                            }
-                            // artist yes! album no! new song!
-                            newsong.setArtist(artist);
-                            newalbum.setArtist(artist);
-                            artist.songs.add(newsong);
-                            artist.albums.add(newalbum);
-                            continue outer;
-                        } else {
-
-                        }
-                    }
-                    // new song! artist no! album no!
-                    songs.add(newsong);
-                    albums.add(newalbum);
-                    artists.add(newartist);
                 }
-            } catch(IOException e) {
-                System.out.println("Cannot import this .csv!");
-                e.printStackTrace();
-                return;
-            }
 
+                Song newsong = new Song();
+                newsong.setName(s[0].strip());
+                newsong.setArtist(newartist);
+                newsong.setAlbum(newalbum);
+                newsong.setRunningTime(s[3].strip());
+                newalbum.getSongs().add(newsong);
+                newartist.songs.add(newsong);
+                songs.add(newsong);
+            }
+        } catch (IOException e) {
+            System.out.println("Errot. Cannot read this file.");
+            return;
         }
     }
 
